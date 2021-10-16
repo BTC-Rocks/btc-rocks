@@ -1,3 +1,5 @@
+(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
+
 (define-read-only (get-last-token-id)
   (begin
     (asserts! (is-rock id) err-no-rock)
@@ -15,7 +17,7 @@
 
 (define-public (transfer (id uint) (sender principal) (recipient principal))
   (begin
-    (asserts! (is-rock id) err-no-rock)
+    (asserts! (is-rock id) err-not-found)
     (match (contract-call? 'SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts transfer id sender recipient)))
       success (ok success)
       error (err (get code error)))
@@ -23,7 +25,6 @@
 (define-read-only (is-rock (id uint))
   (is-some (index-of rocks id)))
 
-(define-constant err-no-rock (err u403))
 
 (define-constant rocks
   (list
