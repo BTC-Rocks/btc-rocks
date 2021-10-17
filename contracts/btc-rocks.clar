@@ -1,9 +1,7 @@
 (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
 
 (define-read-only (get-last-token-id)
-  (begin
-    (asserts! (is-rock id) err-no-rock)
-    (contract-call? 'SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts get-last-token-id)))
+  u5593)
 
 (define-read-only (get-token-uri (id uint))
   (begin
