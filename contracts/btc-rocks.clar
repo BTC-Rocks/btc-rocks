@@ -25,6 +25,36 @@
 (define-read-only (is-rock (id uint))
   (is-some (index-of rocks id)))
 
+;;
+;; name related
+;;
+(define-data-var this-ctr tx-sender)
+(define-data-var new-owner principal 'SP000000000000000000002Q6VF78)
+
+;; only called once by the deployer
+(define-public (set-contract (ctr principal))
+  (begin
+    (asserts! (is-eq this-ctr tx-sender) err-permission-denied)
+    (var-set this-ctr ctr)))
+
+;; transfer the name owned by the contract
+(define-public (name-transfer)
+  (let ((name (unwrap! (contract-call? 'SP000000000000000000002Q6VF78.bns
+          resolve-principal this-contract) err-not-found)))
+    (asserts! (transfer-agreed) err-no-agreement)
+    (as-contract (contract-call? 'SP000000000000000000002Q6VF78.bns
+      name-transfer (get namespace name) (get name name) (var-get new-owner) none))))
+
+;; renew name
+(define-public (name-renew (stx-to-burn uint))
+  (let ((name (unwrap! (contract-call? 'SP000000000000000000002Q6VF78.bns
+          resolve-principal this-contract) err-not-found)))
+    (asserts! (renewal-agreed) err-no-agreement)
+    (as-contract (contract-call? 'SP000000000000000000002Q6VF78.bns
+      name-renew (get namespace name) (get name name) stx-to-burn none none))))
+
+(define-constant err-not-found (err u404))
+(define-constant err-no-agreement (err u500))
 
 (define-constant rocks
   (list
