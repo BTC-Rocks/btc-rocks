@@ -25,7 +25,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ["*", ".js", ".jsx"],
+    extensions: ["*", ".js", ".jsx", ".ts"],
     fallback: {
       stream: require.resolve("stream-browserify"),
       crypto: require.resolve("crypto-browserify"),

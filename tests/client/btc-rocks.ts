@@ -1,3 +1,4 @@
+import { Chain, types, Account } from "./deps";
 
 export function isBoomId(boomId: number, chain: Chain, user: Account) {
   return chain.callReadOnlyFn(
