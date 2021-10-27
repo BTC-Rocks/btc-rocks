@@ -5,7 +5,11 @@ costs_version = 1
 [[project.requirements]]
 contract_id = "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts"
 
+[contracts.commission-trait]
+path = "contracts/commission-trait.clar"
+depends_on = []
+
 
 [contracts.btc-rocks]
 path = "contracts/btc-rocks.clar"
-depends_on = []
+depends_on = ["commission-trait"]
