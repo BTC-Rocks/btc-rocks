@@ -513,43 +513,6 @@ export function App() {
     fn();
   }, []);
 
-  const burn = async () => {
-    if (userData) {
-      console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
-      await openContractCall({
-        userSession,
-        contractAddress: "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
-        contractName: "boom-nfts",
-        functionName: "burn",
-        functionArgs: [uintCV(rock16boomid)],
-        network,
-        postConditionMode: PostConditionMode.Deny,
-        postConditions: [
-          makeStandardNonFungiblePostCondition(
-            userData.profile.stxAddress["mainnet"],
-            NonFungibleConditionCode.DoesNotOwn,
-            createAssetInfo(
-              "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
-              "boom-nfts",
-              "boom"
-            ),
-            uintCV(rock16boomid)
-          ),
-        ],
-      });
-    } else {
-      showConnect({
-        userSession,
-        onFinish: () => {
-          setUserData(userSession.loadUserData());
-        },
-        appDetails: {
-          name: "BTC Rocks",
-          icon: "https://vigilant-sammet-8d9405.netlify.app/android-icon-192x192.png",
-        },
-      });
-    }
-  };
   return (
     <>
       <section height="80%">
@@ -560,18 +523,6 @@ export function App() {
         />
         <br />
         <ProgressBar completed={completed} />
-      </section>
-      <section style={{ padding: "8px" }}>
-        Only click if you own{" "}
-        <a href="https://stxnft.com/SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts:5245">
-          BTC Rock #16
-        </a> (boom id {rock16boomid}).
-        <br />
-        <button onClick={burn}>
-          {userData
-            ? "Burn BTC Rock #16"
-            : "Connect wallet to burn BTC rock #16"}
-        </button>
       </section>
     </>
   );
