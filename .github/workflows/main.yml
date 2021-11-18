@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: "Execute test suite"
-        uses: docker://ludovic/clarinet:latest
+        uses: docker://hirosystems/clarinet:latest
         with: 
           args: test --coverage
       - name: "Export code coverage"
