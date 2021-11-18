@@ -31,7 +31,43 @@ Clarinet.test({
     ]);
     block.receipts[0].result.expectOk().expectBool(true);
     block.receipts[1].result.expectOk().expectBool(true);
-    block.receipts[0].events.map((e: any) => console.log(e));
+
+    // no floor price paid because there is only 1 btc rock
+    // that is owned by sender (wallet1)
+    assertEquals(block.receipts[1].events.length, 1);
+    block.receipts[1].events[0].nft_transfer_event.value.expectUint(1);
+  },
+});
+
+Clarinet.test({
+  name: "User pays floor price for transfering upgraded rocks",
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    let wallet1 = accounts.get("wallet_1")!;
+    let wallet2 = accounts.get("wallet_2")!;
+    let wallet3 = accounts.get("wallet_3")!;
+    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    assertEquals(block.receipts.length, 600);
+
+    // upgrade and transfer btc rock #1 to wallet 2
+    // upgrade and hold btc rock #2
+    block = chain.mineBlock([
+      upgrade(1, wallet1),
+      transfer(1, wallet1, wallet2, wallet1),
+      upgrade(2, wallet1),
+    ]);
+    block.receipts[0].result.expectOk().expectBool(true);
+    block.receipts[1].result.expectOk().expectBool(true);
+    block.receipts[2].result.expectOk().expectBool(true);
+
+    block = chain.mineBlock([transfer(1, wallet2, wallet3, wallet2)]);
+
+    block.receipts[0].result.expectOk().expectBool(true);
+    // pay floor price for 1 other btc rock to wallet1
+    assertEquals(2, block.receipts[0].events.length);
+    block.receipts[0].events[0].stx_transfer_event.amount.expectInt(100_000_000); // 100 STX
+    block.receipts[0].events[0].stx_transfer_event.sender.expect(wallet2.address); // sender
+    block.receipts[0].events[0].stx_transfer_event.recipient.expect(wallet1.address); // holder of rock #2
+    block.receipts[0].events[1].nft_transfer_event.value.expectUint(1);
   },
 });
 

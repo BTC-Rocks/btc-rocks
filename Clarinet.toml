@@ -17,6 +17,11 @@ depends_on = []
 path = "contracts/external/commission-nop.clar"
 depends_on = []
 
+
+[contracts.commission-fixed]
+path = "contracts/external/commission-fixed.clar"
+depends_on = []
+
 [contracts.commission-trait]
 path = "contracts/external/commission-trait.clar"
 depends_on = []

@@ -24,7 +24,7 @@
   (match (nft-get-owner? rock id)
   rock-owner
     (if (not (is-eq tx-sender rock-owner))
-      (stx-transfer? u100 tx-sender rock-owner)
+      (stx-transfer? TX_FEE_PER_ROCK tx-sender rock-owner)
       (ok true))
   (ok true)))
 
@@ -96,6 +96,7 @@
       (floor (* (var-get number-of-rocks) TX_FEE_PER_ROCK))
       (price (get price listing)))
     (asserts! (is-eq (contract-of comm) (get commission listing)) err-invalid-commission)
+    (asserts! (> price floor) err-price-too-low)
     ;; Rule seller gets price minus contract floor
     (try! (stx-transfer? (- price floor) tx-sender owner))
     (try! (contract-call? comm pay id price))
@@ -108,4 +109,5 @@
 (define-constant err-not-found (err u404))
 (define-constant err-invalid-commission (err u500))
 (define-constant err-listing (err u501))
+(define-constant err-price-too-low (err u502))
 (define-constant err-fatal (err u999))
