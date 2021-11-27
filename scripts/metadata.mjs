@@ -9,6 +9,13 @@ const boomIds = [
   5459, 5424, 5425, 5458, 5460, 5461, 5462, 5463, 5464, 5536, 5537, 5538, 5539,
   5540, 5541, 5542, 5543, 5544, 5545, 5546, 5559, 5560, 5593, 5592,
 ];
+const attributes = {
+  4: "Clone 1",
+  5: "Clone 2",
+  14: "Twin 1",
+  18: "Twin 2",
+};
+
 async function readMetadata() {
   const content = fs.readFileSync("./data/exported-metadata.csv").toString();
   const lines = content.split("\n");
@@ -66,17 +73,39 @@ async function downloadImages(rocks) {
     }
   }
 }
+function getName(rock) {
+  if (attributes[rock.id]) {
+    return rock.name + " " + attributes[rock.id];
+  } else {
+    return rock.name;
+  }
+}
 
 function writeMetadata(rocks) {
-  fs.rmdirSync("data/meta", {})
-  fs.mkdirSync("data/meta", {recursive: true, })
+  try {
+    fs.rmdirSync("data/metadata/metadata", {});
+  } catch (e) {}
+
+  fs.mkdirSync("data/metadata/metadata", { recursive: true });
   for (let r of rocks) {
-    fs.writeFileSync(`data/meta/${r.id}.json`)
+    fs.writeFileSync(
+      `data/metadata/metadata/${r.id}.json`,
+      JSON.stringify({
+        version: 1,
+        name: getName(r),
+        image: `ipfs://.../rock${r.id}.jpeg`,
+        properties: {
+          creator: { type: "string", value: "bennycage.btc" },
+          boomId: { type: "number", value: r.boomId },
+          boomHash: { type: "string", value: r.hash },
+        },
+      })
+    );
   }
 }
 
 readMetadata().then((rocks) => {
   console.log(rocks.length);
   //downloadImages(rocks);
-  writeMetadata(rocks)
+  writeMetadata(rocks);
 });

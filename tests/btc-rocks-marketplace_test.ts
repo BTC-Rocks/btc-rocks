@@ -6,7 +6,8 @@ import {
   Account,
   types,
 } from "../src/client/deps.ts";
-import { transfer, list, unlist, buy } from "../src/client/btc-rocks.ts";
+import { transfer } from "../src/client/btc-rocks.ts";
+import { list, unlist, buy} from "../src/client/btc-rocks-marketplace.ts";
 import { mineBoomRocks } from "../src/client/boom-nfts.ts";
 import { upgrade } from "../src/client/btc-rocks-mint.ts";
 
@@ -106,7 +107,7 @@ Clarinet.test({
 });
 
 Clarinet.test({
-  name: "Ensure that NFT can't be transferred when listed",
+  name: "Ensure that NFT can be transferred even when listed",
   async fn(chain: Chain, accounts: Map<string, Account>) {
     let deployer = accounts.get("deployer")!;
     let wallet1 = accounts.get("wallet_1")!;
@@ -122,6 +123,6 @@ Clarinet.test({
       transfer(1, wallet1, wallet2, wallet1),
     ]);
     block.receipts[0].result.expectOk().expectBool(true);
-    block.receipts[1].result.expectErr().expectUint(501);
+    block.receipts[1].result.expectOk().expectBool(true);
   },
 });

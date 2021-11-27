@@ -34,3 +34,7 @@ depends_on = ["commission-trait"]
 [contracts.btc-rocks-mint]
 path = "contracts/btc-rocks-mint.clar"
 depends_on = ["btc-rocks"]
+
+[contracts.btc-rocks-marketplace]
+path = "contracts/btc-rocks-marketplace.clar"
+depends_on = ["btc-rocks"]

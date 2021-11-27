@@ -64,9 +64,16 @@ Clarinet.test({
     block.receipts[0].result.expectOk().expectBool(true);
     // pay floor price for 1 other btc rock to wallet1
     assertEquals(2, block.receipts[0].events.length);
-    block.receipts[0].events[0].stx_transfer_event.amount.expectInt(100_000_000); // 100 STX
-    block.receipts[0].events[0].stx_transfer_event.sender.expect(wallet2.address); // sender
-    block.receipts[0].events[0].stx_transfer_event.recipient.expect(wallet1.address); // holder of rock #2
+    console.log(block.receipts[0].events.map((e) => console.log(e)));
+    block.receipts[0].events[0].stx_transfer_event.amount.expectInt(
+      100_000_000
+    ); // 100 STX
+    block.receipts[0].events[0].stx_transfer_event.sender.expectPrincipal(
+      wallet2.address
+    ); // sender
+    block.receipts[0].events[0].stx_transfer_event.recipient.expectPrincipal(
+      wallet1.address
+    ); // holder of rock #2
     block.receipts[0].events[1].nft_transfer_event.value.expectUint(1);
   },
 });
