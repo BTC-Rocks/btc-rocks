@@ -1,4 +1,4 @@
-(use-trait commission-trait .commission-trait.commission)
+(use-trait commission-trait 'SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335.commission-trait.commission)
 (define-map market uint {price: uint, commission: principal})
 
 (define-read-only (get-listing-in-ustx (id uint))
@@ -13,14 +13,14 @@
   (let ((listing  {price: price, commission: (contract-of comm)}))
     (asserts! (is-sender-owner id) err-not-authorized)
     (map-set market id listing)
-    (print (merge listing {a: "list-in-ustx", id: id}))
+    (print (merge listing {action: "list-in-ustx", id: id}))
     (ok true)))
 
 (define-public (unlist-in-ustx (id uint))
   (begin
     (asserts! (is-sender-owner id) err-not-authorized)
     (map-delete market id)
-    (print {a: "unlist-in-ustx", id: id})
+    (print {action: "unlist-in-ustx", id: id})
     (ok true)))
 
 (define-public (buy-in-ustx (id uint) (comm <commission-trait>))
@@ -35,7 +35,7 @@
     (try! (contract-call? comm pay id price))
     (try! (contract-call? .btc-rocks transfer id owner tx-sender))
     (map-delete market id)
-    (print {a: "buy-in-ustx", id: id})
+    (print {action: "buy-in-ustx", id: id})
     (ok true)))
 
 (contract-call? .btc-rocks set-marketplace)

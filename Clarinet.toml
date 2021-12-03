@@ -8,6 +8,10 @@ contract_id = "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts"
 [[project.requirements]]
 contract_id = "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait"
 
+[[project.requirements]]
+contract_id = "SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335.commission-trait"
+
+
 [contracts.boom-nfts]
 path = "contracts/external/boom-nfts.clar"
 depends_on = []
@@ -17,18 +21,13 @@ depends_on = []
 path = "contracts/external/commission-nop.clar"
 depends_on = []
 
-
 [contracts.commission-fixed]
 path = "contracts/external/commission-fixed.clar"
 depends_on = []
 
-[contracts.commission-trait]
-path = "contracts/external/commission-trait.clar"
-depends_on = []
-
 [contracts.btc-rocks]
 path = "contracts/btc-rocks.clar"
-depends_on = ["commission-trait"]
+depends_on = []
 
 
 [contracts.btc-rocks-mint]

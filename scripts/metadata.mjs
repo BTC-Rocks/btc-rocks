@@ -82,8 +82,10 @@ function getName(rock) {
 
 function writeMetadata(rocks) {
   try {
-    fs.rmSync("data/metadata/metadata", {recursive: true});
-  } catch (e) {console.log(e)}
+    fs.rmSync("data/metadata/metadata", { recursive: true });
+  } catch (e) {
+    console.log(e);
+  }
 
   fs.mkdirSync("data/metadata/metadata", { recursive: true });
   for (let r of rocks) {
@@ -94,7 +96,8 @@ function writeMetadata(rocks) {
         name: getName(r),
         image: `ipfs://QmQhmPbVbXYnSTk7Z3i6GmiAYyL75ys1ZrJPNnXnBs4ch4/rock${r.id}.jpeg`,
         properties: {
-          creator: { type: "string", value: "bennycage.btc" },
+          collection: "BTC Rocks",
+          creator: { type: "string", value: "Benny Cage" },
           boomId: { type: "number", value: r.boomId },
           boomHash: { type: "string", value: r.hash },
         },

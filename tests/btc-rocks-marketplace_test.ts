@@ -1,10 +1,8 @@
 import {
   assertEquals,
   Clarinet,
-  Tx,
   Chain,
   Account,
-  types,
 } from "../src/client/deps.ts";
 import { transfer } from "../src/client/btc-rocks.ts";
 import { list, unlist, buy} from "../src/client/btc-rocks-marketplace.ts";
@@ -58,7 +56,7 @@ Clarinet.test({
     assertEquals(feeStxEvent.stx_transfer_event.amount, "1000000");
     assertEquals(stxEvent.stx_transfer_event.amount, "100000000");
     assertEquals(nftEvent.nft_transfer_event.recipient, wallet2.address);
-    assertEquals(logEvent.contract_event.value, '{a: "buy-in-ustx", id: u1}');
+    assertEquals(logEvent.contract_event.value, '{action: "buy-in-ustx", id: u1}');
   },
 });
 

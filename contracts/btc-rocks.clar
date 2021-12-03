@@ -27,7 +27,7 @@
   (var-get fee-per-rock))
 
 (define-public (get-token-uri (id uint))
-  (ok (some "ipfs://Qm../{id}.json")))
+  (ok (some "ipfs://Qmeq7Z5vdhJwfKauf2XWL44YqgCTpHmAgrzrb1BKSEeY7x/{id}.json")))
 
 (define-public (get-owner (id uint))
   (ok (nft-get-owner? rock id)))
@@ -100,9 +100,10 @@
 ;; can only be called once
 (define-public (set-marketplace)
   (let ((marketplace (map-get? marketplace-address true)))
-    (asserts! (and (is-none marketplace)
-              (map-insert marketplace-address true contract-caller))
-                err-fatal)
+    (asserts! (and
+                (is-none marketplace)
+                (map-insert marketplace-address true contract-caller))
+              err-fatal)
     (print contract-caller)
     (ok contract-caller)))
 
