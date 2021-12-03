@@ -7,10 +7,8 @@
 
 ;; storage of mint-address and admin
 (define-map mint-address bool principal)
-
 ;; storage of marketplace-address
 (define-map marketplace-address bool principal)
-
 ;; storage of admin-address
 (define-map admin bool principal)
 
@@ -34,6 +32,9 @@
 (define-public (get-owner (id uint))
   (ok (nft-get-owner? rock id)))
 
+;;
+;; transfer functions
+;;
 (define-private (floor-stx-transfer (id uint))
   (match (nft-get-owner? rock id)
   rock-owner
@@ -61,7 +62,9 @@
     (let ((result (transfer id sender recipient)))
       (print memo)
       result))
-
+;;
+;; operable functions
+;;
 (define-private (is-approved-with-owner (id uint) (operator principal) (owner principal))
   (or
     (is-eq owner operator)
@@ -75,7 +78,7 @@
   (let ((owner (unwrap! (nft-get-owner? rock id) err-not-found)))
 	  (ok (map-set approvals {owner: tx-sender, operator: operator, id: id} approved))))
 
-;; upgrade btc rock
+;; upgrade btc rock - can only be called from mint contract
 (define-public (upgrade (id uint))
   (begin
     (asserts! (is-eq contract-caller (unwrap! (map-get? mint-address true) err-fatal)) err-not-authorized)
@@ -126,6 +129,5 @@
 
 (define-constant err-not-authorized (err u403))
 (define-constant err-not-found (err u404))
-(define-constant err-listing (err u501))
 (define-constant err-invalid-sender (err u503))
 (define-constant err-fatal (err u999))

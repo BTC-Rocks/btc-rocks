@@ -1,7 +1,6 @@
 import fs from "fs";
 import { fetchPrivate } from "@stacks/common";
 import { webcrypto } from "crypto";
-import { RSA_NO_PADDING } from "constants";
 
 const boomIds = [
   5193, 5201, 5202, 5426, 5204, 5203, 5236, 5237, 5238, 5239, 5240, 5241, 5242,
@@ -83,8 +82,8 @@ function getName(rock) {
 
 function writeMetadata(rocks) {
   try {
-    fs.rmdirSync("data/metadata/metadata", {});
-  } catch (e) {}
+    fs.rmSync("data/metadata/metadata", {recursive: true});
+  } catch (e) {console.log(e)}
 
   fs.mkdirSync("data/metadata/metadata", { recursive: true });
   for (let r of rocks) {
@@ -93,7 +92,7 @@ function writeMetadata(rocks) {
       JSON.stringify({
         version: 1,
         name: getName(r),
-        image: `ipfs://.../rock${r.id}.jpeg`,
+        image: `ipfs://QmQhmPbVbXYnSTk7Z3i6GmiAYyL75ys1ZrJPNnXnBs4ch4/rock${r.id}.jpeg`,
         properties: {
           creator: { type: "string", value: "bennycage.btc" },
           boomId: { type: "number", value: r.boomId },

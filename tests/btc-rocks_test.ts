@@ -79,7 +79,7 @@ Clarinet.test({
 });
 
 Clarinet.test({
-  name: "User can't transfer old rocks",
+  name: "User can't transfer old rocks with this contract",
   async fn(chain: Chain, accounts: Map<string, Account>) {
     let deployer = accounts.get("deployer")!;
     let wallet1 = accounts.get("wallet_1")!;

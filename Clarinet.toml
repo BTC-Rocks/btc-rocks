@@ -1,6 +1,6 @@
 [project]
 name = "btc-rocks"
-costs_version = 1
+costs_version = 2
 
 [[project.requirements]]
 contract_id = "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts"
