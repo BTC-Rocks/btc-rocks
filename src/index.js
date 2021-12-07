@@ -9,7 +9,9 @@ import {
   contractPrincipalCV,
   createAssetInfo,
   cvToString,
+  fetchPrivate,
   FungibleConditionCode,
+  hexToCV,
   makeStandardNonFungiblePostCondition,
   makeStandardSTXPostCondition,
   NonFungibleConditionCode,
@@ -474,13 +476,40 @@ export function App() {
   const [completed, setCompleted] = useState(0);
   const [selectedRock, setSelectedRock] = useState();
   const [status, setStatus] = useState("");
+  const [ownedRocks, setOwnedRocks] = useState([]);
 
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-      loadOwners();
+      setupUser();
     }
   }, []);
+
+  const setupUser = async () => {
+    const user = userSession.loadUserData();
+    setUserData(user);
+    //loadOwners();
+    loadUserRocks(user);
+  };
+
+  const loadUserRocks = async (user) => {
+    console.log("addr", user?.profile?.stxAddress?.mainnet, user);
+    if (user?.profile?.stxAddress?.mainnet) {
+      const result = await fetchPrivate(
+        `https://stacks-node-api.mainnet.stacks.co/extended/v1/address/${user.profile.stxAddress.mainnet}/nft_events`
+      );
+      console.log({ result });
+      if (result.ok) {
+        const nftEvents = await result.json();
+        const rocks = nftEvents.nft_events.filter(
+          (e) =>
+            e.asset_identifier ===
+            "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks::rock"
+        );
+        console.log(rocks);
+        setOwnedRocks(rocks);
+      }
+    }
+  };
 
   const loadOwners = async () => {
     const imageList = [];
@@ -553,7 +582,7 @@ export function App() {
             ),
           ],
           onFinish: (tx) => {
-            setStatus(`Transaction submitted: ${tx.id}`);
+            setStatus(`Transaction submitted: ${tx.txId}`);
           },
           onCancel: () => {
             setStatus(`Transaction not submitted.`);
@@ -566,8 +595,7 @@ export function App() {
       showConnect({
         userSession,
         onFinish: () => {
-          setUserData(userSession.loadUserData());
-          loadOwners();
+          setupUser();
         },
         appDetails: {
           name: "BTC Rocks",
@@ -608,6 +636,14 @@ export function App() {
         {userData && <button onClick={logout}>logout</button>}
       </section>
       <section>{status}</section>
+      {ownedRocks && ownedRocks.length > 0 && (
+        <section>
+          <h5>Your upgraded BTC Rocks</h5>
+          {ownedRocks.map((e, i) => {
+            return <div key={i}>#{hexToCV(e.value.hex).value.toString()}</div>;
+          })}
+        </section>
+      )}
     </>
   );
 }
