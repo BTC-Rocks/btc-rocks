@@ -9,7 +9,9 @@ import {
   contractPrincipalCV,
   createAssetInfo,
   cvToString,
+  FungibleConditionCode,
   makeStandardNonFungiblePostCondition,
+  makeStandardSTXPostCondition,
   NonFungibleConditionCode,
   PostConditionMode,
   standardPrincipalCV,
@@ -145,14 +147,6 @@ const rocksData = [
       "https://boom-nft-41369b66-36da-4442-be60-fff6d755b065.s3.amazonaws.com/b7f6eeea-b10c-402c-b132-0d72fe95c4a2.jpeg",
     description: "BTC ROCK #15	 (5244)",
     id: 5244,
-  },
-  {
-    original:
-      "https://boom-nft-41369b66-36da-4442-be60-fff6d755b065.s3.amazonaws.com/5b826d61-b3c2-470c-a696-99208f8a0881.jpeg",
-    thumbnail:
-      "https://boom-nft-41369b66-36da-4442-be60-fff6d755b065.s3.amazonaws.com/5b826d61-b3c2-470c-a696-99208f8a0881.jpeg",
-    description: "BTC ROCK #16	 (5245)",
-    id: 5245,
   },
   {
     original:
@@ -440,7 +434,7 @@ const rocksData = [
 const network = new StacksMainnet();
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
-const rock16boomid = 5245
+const rock16boomid = 5245;
 function nameToString(nameCV) {
   return (
     nameCV.data.name.buffer.toString("ascii") +
@@ -477,53 +471,143 @@ async function getUsername(address) {
 export function App() {
   const [images, setImages] = useState(rocksData);
   const [userData, setUserData] = useState();
-
   const [completed, setCompleted] = useState(0);
+  const [selectedRock, setSelectedRock] = useState();
+  const [status, setStatus] = useState("");
+
   useEffect(() => {
-    const fn = async () => {
-      const imageList = [];
-      let count = 0;
-      for (let r of rocksData) {
-        const resultCV = await callReadOnlyFunction({
-          contractAddress: "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
-          contractName: "boom-nfts",
-          functionName: "get-owner",
-          functionArgs: [uintCV(r.id)],
-          senderAddress: "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
-          network,
-        });
-        console.log(resultCV);
-        let owner =
-          resultCV.value.type === ClarityType.OptionalSome
-            ? cvToString(resultCV.value.value)
-            : undefined;
-        if (owner) {
-          owner = await getUsername(owner);
-        }
-        imageList.push({
-          original: r.original,
-          thumbnail: r.original,
-          description: owner ? r.description + " " + owner : r.description,
-        });
-        count++;
-        setCompleted(count);
-      }
-      setImages(imageList);
-    };
-    fn();
+    if (userSession.isUserSignedIn()) {
+      setUserData(userSession.loadUserData());
+      loadOwners();
+    }
   }, []);
+
+  const loadOwners = async () => {
+    const imageList = [];
+    let count = 0;
+    for (let r of rocksData) {
+      let owner = await getOwner(r.id);
+      if (owner) {
+        owner = await getUsername(owner);
+      }
+      imageList.push({
+        original: r.original,
+        thumbnail: r.original,
+        description: owner ? r.description + " " + owner : r.description,
+      });
+      count++;
+      setCompleted(count);
+    }
+    setImages(imageList);
+  };
+
+  const getOwner = async (boomId) => {
+    const resultCV = await callReadOnlyFunction({
+      contractAddress: "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
+      contractName: "boom-nfts",
+      functionName: "get-owner",
+      functionArgs: [uintCV(boomId)],
+      senderAddress: "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
+      network,
+    });
+    console.log(resultCV);
+    let owner =
+      resultCV.value.type === ClarityType.OptionalSome
+        ? cvToString(resultCV.value.value)
+        : undefined;
+    return owner;
+  };
+  const upgrade = async (rockId) => {
+    if (userData) {
+      setStatus(`Verifying ownership ..`);
+      console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
+      const boomId = rocksData[rockId - 1].id;
+      console.log(rockId, boomId);
+      const owner = await getOwner(boomId);
+      console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
+      if (owner === userData?.profile?.stxAddress?.mainnet) {
+        setStatus(`Check and confirm in your wallet`);
+        await openContractCall({
+          userSession,
+          contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+          contractName: "btc-rocks-mint",
+          functionName: "upgrade",
+          functionArgs: [uintCV(rockId)],
+          network,
+          postConditionMode: PostConditionMode.Deny,
+          postConditions: [
+            makeStandardSTXPostCondition(
+              userData.profile.stxAddress.mainnet,
+              FungibleConditionCode.Equal,
+              60_000_000
+            ),
+            makeStandardNonFungiblePostCondition(
+              userData.profile.stxAddress.mainnet,
+              NonFungibleConditionCode.DoesNotOwn,
+              createAssetInfo(
+                "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
+                "boom-nfts",
+                "boom"
+              ),
+              uintCV(rocksData[rockId - 1].id)
+            ),
+          ],
+          onFinish: (tx) => {
+            setStatus(`Transaction submitted: ${tx.id}`);
+          },
+          onCancel: () => {
+            setStatus(`Transaction not submitted.`);
+          },
+        });
+      } else {
+        setStatus(`You do not own BTC Rock #${rockId}`);
+      }
+    } else {
+      showConnect({
+        userSession,
+        onFinish: () => {
+          setUserData(userSession.loadUserData());
+          loadOwners();
+        },
+        appDetails: {
+          name: "BTC Rocks",
+          icon: "https://vigilant-sammet-8d9405.netlify.app/android-icon-192x192.png",
+        },
+      });
+    }
+  };
+
+  const logout = () => {
+    userSession.signUserOut("/");
+    setUserData(undefined);
+  };
 
   return (
     <>
-      <section height="80%">
+      <section>
         <ImageGallery
           items={images}
           thumbnailPosition="bottom"
           showThumbnails="true"
+          onSlide={(currentIndex) => {
+            setSelectedRock(currentIndex + 1);
+          }}
         />
         <br />
         <ProgressBar completed={completed} />
       </section>
+      <section style={{ padding: "8px" }}>
+        <button
+          onClick={() => upgrade(selectedRock)}
+          disabled={userData && !selectedRock}
+        >
+          {userData
+            ? `Upgrade BTC Rock ${selectedRock ? "#" + selectedRock : ""}`
+            : "Connect wallet to upgrade BTC Rocks"}
+        </button>
+        {userData && <button onClick={logout}>logout</button>}
+      </section>
+      <section>{status}</section>
     </>
   );
 }
