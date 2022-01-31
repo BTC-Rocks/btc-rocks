@@ -624,6 +624,13 @@ export function App() {
         <br />
         <ProgressBar completed={completed} />
       </section>
+      <section>
+        <h1>Upgrade process</h1>
+        Read details at{" "}
+        <a href="https://github.com/BTC-Rocks/btc-rocks#contract-rules" target="_blank">
+          https://github.com/BTC-Rocks/btc-rocks
+        </a>
+      </section>
       <section style={{ padding: "8px" }}>
         <button
           onClick={() => upgrade(selectedRock)}

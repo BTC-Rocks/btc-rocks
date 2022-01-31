@@ -30,7 +30,7 @@ function burnNFT(account: Account, id: number) {
   );
 }
 
-export function mineBoomRocks(user: Account) {
+export function mintBoomRocks(user: Account) {
   const txs = [];
   for (let i = 0; i < 600; i++) {
     txs.push(mintNFT(user));

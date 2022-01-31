@@ -1,18 +1,18 @@
-import { mineBoomRocks } from "../src/client/boom-nfts.ts";
-import { upgrade } from "../src/client/btc-rocks-mint.ts";
+import { mineBoomRocks } from "./client/boom-nfts.ts";
+import { upgrade } from "./client/btc-rocks-mint.ts";
 import {
   transfer,
   setApproved,
   isApproved,
   upgrade as upgradeNft,
-} from "../src/client/btc-rocks.ts";
+} from "./client/btc-rocks.ts";
 import {
   Clarinet,
   Tx,
   Chain,
   Account,
   assertEquals,
-} from "../src/client/deps.ts";
+} from "./client/deps.ts";
 
 Clarinet.test({
   name: "User can't call upgrade directly",
