@@ -1,6 +1,6 @@
-import { toBoom, upgrade } from "../src/client/btc-rocks-mint.ts";
-import { Clarinet, Chain, Account, assertEquals } from "../src/client/deps.ts";
-import { mineBoomRocks } from "../src/client/boom-nfts.ts";
+import { toBoom, upgrade } from "./client/btc-rocks-mint.ts";
+import { Clarinet, Chain, Account, assertEquals } from "./client/deps.ts";
+import { mineBoomRocks } from "./client/boom-nfts.ts";
 
 Clarinet.test({
   name: "rock id is mapped to boom id",

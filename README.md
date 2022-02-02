@@ -20,7 +20,7 @@ During upgrade, the original Boom NFT is burnt and the corresponding BTC Rock NF
 
 ### Transfer
 
-BTC Rocks can be transferred by the owner or by an approved operator. 
+BTC Rocks can be transferred by the owner or by an approved operator like the BTC Rock Marketplace.
 
 When a BTC Rock is transferred a fee of currently 100 STX has to be paid to each BTC Rock holder. The contract administrator can change this fee.
 
@@ -45,3 +45,8 @@ No royalties are paid to the artist.
 
 Each BTC Rock holder receives a right to use the art associated with the NFT according to the for BTC Rocks adapted version of NFT License 2.0, https://www.nftlicense.org/.
 
+
+## Contribute
+This is a monorepo that consists of
+* backend_public: all Clarity contracts and tests
+* frontend: all basic UI for the public backend

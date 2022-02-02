@@ -3,11 +3,11 @@ import {
   Clarinet,
   Chain,
   Account,
-} from "../src/client/deps.ts";
-import { transfer } from "../src/client/btc-rocks.ts";
-import { list, unlist, buy} from "../src/client/btc-rocks-marketplace.ts";
-import { mineBoomRocks } from "../src/client/boom-nfts.ts";
-import { upgrade } from "../src/client/btc-rocks-mint.ts";
+} from "./client/deps.ts";
+import { transfer } from "./client/btc-rocks.ts";
+import { list, unlist, buy} from "./client/btc-rocks-marketplace.ts";
+import { mintBoomRocks } from "./client/boom-nfts.ts";
+import { upgrade } from "./client/btc-rocks-mint.ts";
 
 Clarinet.test({
   name: "Ensure that NFT can be listed and unlisted",
@@ -16,7 +16,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
 
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     // upgrade rock #1
     block = chain.mineBlock([upgrade(1, wallet1)]);

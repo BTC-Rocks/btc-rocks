@@ -1,0 +1,14 @@
+#V2
+::help
+get_costs u"1234"
+::get_costs u"1234"
+::get_costs "1234"
+::get_costs (define-data-var txt (string-utf8 10)) (var-set txt u"1234")
+::get_costs (begin (define-data-var txt (string-utf8 10)) (var-set txt u"1234"))
+::get_costs  (concat u"1234" u"5678")
+::get_costs  (concat "1234" "5678")
+::get_costs  (concat u"1234" u"5678")
+::get_costs  (concat "1234" "5678")
+::get_costs ([200~ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.btc-rocks\n)
+::get_costs (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.btc-rocks get-token-uri 1)
+::get_costs (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.btc-rocks get-token-uri u1)

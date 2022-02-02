@@ -546,63 +546,125 @@ export function App() {
         : undefined;
     return owner;
   };
+
+  const getBtcRockOwner = async (rockId) => {
+    const resultCV = await callReadOnlyFunction({
+      contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      contractName: "btc-rocks",
+      functionName: "get-owner",
+      functionArgs: [uintCV(rockId)],
+      senderAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      network,
+    });
+    console.log(resultCV);
+    let owner =
+      resultCV.value.type === ClarityType.OptionalSome
+        ? cvToString(resultCV.value.value)
+        : undefined;
+    return owner;
+  };
+
   const upgrade = async (rockId) => {
-    if (userData) {
-      setStatus(`Verifying ownership ..`);
-      console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
-      const boomId = rocksData[rockId - 1].id;
-      console.log(rockId, boomId);
-      const owner = await getOwner(boomId);
-      console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
-      if (owner === userData?.profile?.stxAddress?.mainnet) {
-        setStatus(`Check and confirm in your wallet`);
-        await openContractCall({
-          userSession,
-          contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
-          contractName: "btc-rocks-mint",
-          functionName: "upgrade",
-          functionArgs: [uintCV(rockId)],
-          network,
-          postConditionMode: PostConditionMode.Deny,
-          postConditions: [
-            makeStandardSTXPostCondition(
-              userData.profile.stxAddress.mainnet,
-              FungibleConditionCode.Equal,
-              60_000_000
-            ),
-            makeStandardNonFungiblePostCondition(
-              userData.profile.stxAddress.mainnet,
-              NonFungibleConditionCode.DoesNotOwn,
-              createAssetInfo(
-                "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
-                "boom-nfts",
-                "boom"
-              ),
-              uintCV(rocksData[rockId - 1].id)
-            ),
-          ],
-          onFinish: (tx) => {
-            setStatus(`Transaction submitted: ${tx.txId}`);
-          },
-          onCancel: () => {
-            setStatus(`Transaction not submitted.`);
-          },
-        });
-      } else {
-        setStatus(`You do not own BTC Rock #${rockId}`);
-      }
-    } else {
-      showConnect({
+    setStatus(`Verifying ownership ..`);
+    console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
+    const boomId = rocksData[rockId - 1].id;
+    console.log(rockId, boomId);
+    const owner = await getOwner(boomId);
+    console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
+    if (owner === userData?.profile?.stxAddress?.mainnet) {
+      setStatus(`Check and confirm in your wallet`);
+      await openContractCall({
         userSession,
-        onFinish: () => {
-          setupUser();
+        contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+        contractName: "btc-rocks-mint",
+        functionName: "upgrade",
+        functionArgs: [uintCV(rockId)],
+        network,
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          makeStandardSTXPostCondition(
+            userData.profile.stxAddress.mainnet,
+            FungibleConditionCode.Equal,
+            60_000_000
+          ),
+          makeStandardNonFungiblePostCondition(
+            userData.profile.stxAddress.mainnet,
+            NonFungibleConditionCode.DoesNotOwn,
+            createAssetInfo(
+              "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ",
+              "boom-nfts",
+              "boom"
+            ),
+            uintCV(rocksData[rockId - 1].id)
+          ),
+        ],
+        onFinish: (tx) => {
+          setStatus(`Transaction submitted: ${tx.txId}`);
         },
-        appDetails: {
-          name: "BTC Rocks",
-          icon: "https://vigilant-sammet-8d9405.netlify.app/android-icon-192x192.png",
+        onCancel: () => {
+          setStatus(`Transaction not submitted.`);
         },
       });
+    } else {
+      setStatus(`You do not own BTC Rock #${rockId}`);
     }
+  };
+
+  const transfer = async (rockId) => {
+    setStatus(`Verifying ownership ..`);
+    console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
+    const owner = await getBtcRockOwner(rockId);
+    console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
+    if (owner === userData?.profile?.stxAddress?.mainnet) {
+      setStatus(`Check and confirm in your wallet`);
+      await openContractCall({
+        userSession,
+        contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+        contractName: "btc-rocks",
+        functionName: "transfer",
+        functionArgs: [uintCV(rockId), standardPrincipalCV(owner), standardPrincipalCV("SPR0X5HVH9JMJJEBPSN81S1SBAXH631CDYF7632N")],
+        network,
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          makeStandardSTXPostCondition(
+            owner,
+            FungibleConditionCode.LessEqual,
+            5000_000_000
+          ),
+          makeStandardNonFungiblePostCondition(
+            owner,
+            NonFungibleConditionCode.DoesNotOwn,
+            createAssetInfo(
+              "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+              "btc-rocks",
+              "rock"
+            ),
+            uintCV(rockId)
+          ),
+        ],
+        onFinish: (tx) => {
+          setStatus(`Transaction submitted: ${tx.txId}`);
+        },
+        onCancel: () => {
+          setStatus(`Transaction not submitted.`);
+        },
+      });
+    } else {
+      setStatus(`You do not own BTC Rock #${rockId}`);
+    }
+  };
+
+  const login = () => {
+    showConnect({
+      userSession,
+      onFinish: () => {
+        setupUser();
+      },
+      appDetails: {
+        name: "BTC Rocks",
+        icon: "https://vigilant-sammet-8d9405.netlify.app/android-icon-192x192.png",
+      },
+    });
   };
 
   const logout = () => {
@@ -624,16 +686,48 @@ export function App() {
         <br />
         <ProgressBar completed={completed} />
       </section>
-      <section style={{ padding: "8px" }}>
-        <button
-          onClick={() => upgrade(selectedRock)}
-          disabled={userData && !selectedRock}
+      <section>
+        <h1>Upgrade process</h1>
+        Read details at{" "}
+        <a
+          href="https://github.com/BTC-Rocks/btc-rocks#contract-rules"
+          target="_blank"
         >
-          {userData
-            ? `Upgrade BTC Rock ${selectedRock ? "#" + selectedRock : ""}`
-            : "Connect wallet to upgrade BTC Rocks"}
-        </button>
-        {userData && <button onClick={logout}>logout</button>}
+          https://github.com/BTC-Rocks/btc-rocks
+        </a>
+      </section>
+      <section style={{ padding: "8px" }}>
+        {!userData && (
+          <button onClick={login}>
+            Connect wallet to upgrade or transfer BTC Rocks
+          </button>
+        )}
+        {userData && (
+          <>
+            <section>
+              <button
+                onClick={() => upgrade(selectedRock)}
+                disabled={!userData || !selectedRock}
+              >
+                {`Upgrade BTC Rock ${selectedRock ? "#" + selectedRock : ""}`}
+              </button>
+              <br />
+              <button
+                onClick={() => transfer(selectedRock)}
+                disabled={!userData || !selectedRock}
+              >
+                {`Transfer BTC Rock ${
+                  selectedRock ? "#" + selectedRock : ""
+                } to rocks.btc`}
+              </button>
+            </section>
+            <section>
+              User: {userData.profile.stxAddress.mainnet}
+              <br />
+              <button onClick={logout}>logout</button>
+            </section>
+          </>
+        )}
       </section>
       <section>{status}</section>
       {ownedRocks && ownedRocks.length > 0 && (
