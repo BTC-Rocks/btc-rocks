@@ -564,6 +564,20 @@ export function App() {
     return owner;
   };
 
+  const feePerRock = 100_000_000;
+
+  const getNumberOfRocks = async () => {
+    const resultCV = await callReadOnlyFunction({
+      contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      contractName: "btc-rocks",
+      functionName: "get-number-of-rocks",
+      functionArgs: [],
+      senderAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      network,
+    });
+    console.log(resultCV);
+    return resultCV.value;
+  };
   const upgrade = async (rockId) => {
     setStatus(`Verifying ownership ..`);
     console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
@@ -614,6 +628,7 @@ export function App() {
     setStatus(`Verifying ownership ..`);
     console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
     const owner = await getBtcRockOwner(rockId);
+    const numberOfRocks = await getNumberOfRocks();
     console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
     if (owner === userData?.profile?.stxAddress?.mainnet) {
       setStatus(`Check and confirm in your wallet`);
@@ -622,14 +637,18 @@ export function App() {
         contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
         contractName: "btc-rocks",
         functionName: "transfer",
-        functionArgs: [uintCV(rockId), standardPrincipalCV(owner), standardPrincipalCV("SPR0X5HVH9JMJJEBPSN81S1SBAXH631CDYF7632N")],
+        functionArgs: [
+          uintCV(rockId),
+          standardPrincipalCV(owner),
+          standardPrincipalCV("SPR0X5HVH9JMJJEBPSN81S1SBAXH631CDYF7632N"),
+        ],
         network,
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           makeStandardSTXPostCondition(
             owner,
             FungibleConditionCode.LessEqual,
-            5000_000_000
+            feePerRock * numberOfRocks
           ),
           makeStandardNonFungiblePostCondition(
             owner,
