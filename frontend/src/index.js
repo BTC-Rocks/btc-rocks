@@ -477,6 +477,7 @@ export function App() {
   const [selectedRock, setSelectedRock] = useState();
   const [status, setStatus] = useState("");
   const [ownedRocks, setOwnedRocks] = useState([]);
+  const [unlockedBalance, setUnlockedBalance] = useState();
 
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
@@ -489,6 +490,7 @@ export function App() {
     setUserData(user);
     //loadOwners();
     loadUserRocks(user);
+    loadBalance(user?.profile?.stxAddress?.mainnet);
   };
 
   const loadUserRocks = async (user) => {
@@ -507,6 +509,27 @@ export function App() {
         );
         console.log(rocks);
         setOwnedRocks(rocks);
+      }
+    }
+  };
+
+  const loadBalance = async (stxAddress) => {
+    console.log("addr", stxAddress);
+    if (stxAddress) {
+      const result = await fetchPrivate(
+        `https://stacks-node-api.mainnet.stacks.co/v2/accounts/${stxAddress}`
+      );
+      console.log({ result });
+      if (result.ok) {
+        try {
+          const balances = await result.json();
+          console.log({ balances });
+          setUnlockedBalance(
+            BigInt(balances.balance) - BigInt(balances.locked)
+          );
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
   };
@@ -626,11 +649,22 @@ export function App() {
 
   const transfer = async (rockId) => {
     setStatus(`Verifying ownership ..`);
-    console.log({ stxAddres: userData.profile.stxAddress["mainnet"] });
+    const stxAddress = userData.profile.stxAddress?.mainnet;
+    console.log({ stxAddress });
     const owner = await getBtcRockOwner(rockId);
     const numberOfRocks = await getNumberOfRocks();
     console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
-    if (owner === userData?.profile?.stxAddress?.mainnet) {
+    const transferFee = numberOfRocks * BigInt(feePerRock);
+    console.log({ unlockedBalance, transferFee });
+    if (unlockedBalance < transferFee) {
+      setStatus(
+        `You do not have enough unlocked stx, ${(
+          transferFee / 1_000_000n
+        ).toString(10)} STX required.`
+      );
+      return;
+    }
+    if (owner === stxAddress) {
       setStatus(`Check and confirm in your wallet`);
       await openContractCall({
         userSession,
