@@ -1,4 +1,4 @@
-import { mineBoomRocks } from "./client/boom-nfts.ts";
+import { mintBoomRocks } from "./client/boom-nfts.ts";
 import { upgrade } from "./client/btc-rocks-mint.ts";
 import {
   transfer,
@@ -12,6 +12,7 @@ import {
   Chain,
   Account,
   assertEquals,
+  types
 } from "./client/deps.ts";
 
 Clarinet.test({
@@ -28,7 +29,7 @@ Clarinet.test({
   async fn(chain: Chain, accounts: Map<string, Account>) {
     let deployer = accounts.get("deployer")!;
     let wallet1 = accounts.get("wallet_1")!;
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     block = chain.mineBlock([
       upgrade(1, wallet1),
@@ -54,7 +55,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
     let wallet3 = accounts.get("wallet_3")!;
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
 
     // upgrade and transfer btc rock #1 to wallet 2
@@ -91,7 +92,7 @@ Clarinet.test({
   async fn(chain: Chain, accounts: Map<string, Account>) {
     let deployer = accounts.get("deployer")!;
     let wallet1 = accounts.get("wallet_1")!;
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     block = chain.mineBlock([transfer(1, deployer, wallet1, deployer)]);
     block.receipts[0].result.expectErr().expectUint(404);
@@ -104,7 +105,7 @@ Clarinet.test({
     let deployer = accounts.get("deployer")!;
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     block = chain.mineBlock([
       upgrade(1, wallet1),
@@ -146,7 +147,7 @@ Clarinet.test({
     block.receipts[1].result.expectErr().expectUint(404);
     block.receipts[2].result.expectPrincipal("ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.btc-rocks-marketplace");
 
-    block = chain.mineBlock(mineBoomRocks(wallet1));
+    block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
 
     block = chain.mineBlock([

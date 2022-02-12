@@ -37,7 +37,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
 
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     // upgrade rock #1
     block = chain.mineBlock([upgrade(1, wallet1)]);
@@ -67,7 +67,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
 
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     // upgrade rock #1
     block = chain.mineBlock([upgrade(1, wallet1)]);
@@ -88,7 +88,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
 
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     // upgrade rock #1
     block = chain.mineBlock([upgrade(1, wallet1)]);
@@ -111,7 +111,7 @@ Clarinet.test({
     let wallet1 = accounts.get("wallet_1")!;
     let wallet2 = accounts.get("wallet_2")!;
 
-    let block = chain.mineBlock(mineBoomRocks(wallet1));
+    let block = chain.mineBlock(mintBoomRocks(wallet1));
     assertEquals(block.receipts.length, 600);
     // upgrade rock #1
     block = chain.mineBlock([upgrade(1, wallet1)]);

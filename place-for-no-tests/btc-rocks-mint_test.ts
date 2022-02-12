@@ -1,6 +1,6 @@
 import { toBoom, upgrade } from "./client/btc-rocks-mint.ts";
 import { Clarinet, Chain, Account, assertEquals } from "./client/deps.ts";
-import { mineBoomRocks } from "./client/boom-nfts.ts";
+import { mintBoomRocks } from "./client/boom-nfts.ts";
 
 Clarinet.test({
   name: "rock id is mapped to boom id",
@@ -20,7 +20,7 @@ Clarinet.test({
   name: "user can upgrade own boom rock",
   async fn(chain: Chain, accounts: Map<string, Account>) {
     let deployer = accounts.get("deployer")!;
-    let block = chain.mineBlock(mineBoomRocks(deployer));
+    let block = chain.mineBlock(mintBoomRocks(deployer));
     assertEquals(block.receipts.length, 600);
     block = chain.mineBlock([upgrade(1, deployer)]);
     block.receipts[0].result.expectOk().expectBool(true);
@@ -34,7 +34,7 @@ Clarinet.test({
   name: "user can't upgrade own boom rock twice",
   async fn(chain: Chain, accounts: Map<string, Account>) {
     const deployer = accounts.get("deployer")!;
-    let block = chain.mineBlock(mineBoomRocks(deployer));
+    let block = chain.mineBlock(mintBoomRocks(deployer));
     assertEquals(block.receipts.length, 600);
     block = chain.mineBlock([upgrade(1, deployer)]);
     block.receipts[0].result.expectOk();
