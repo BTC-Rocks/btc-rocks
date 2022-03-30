@@ -1,5 +1,12 @@
 import fs from "fs";
 import { fetchPrivate } from "@stacks/common";
+import {
+  callReadOnlyFunction,
+  ClarityType,
+  cvToString,
+  uintCV,
+} from "@stacks/transactions";
+import { StacksMainnet } from "@stacks/network";
 import { webcrypto } from "crypto";
 
 const boomIds = [
@@ -16,7 +23,7 @@ const attributes = {
 };
 
 async function readMetadata() {
-  const content = fs.readFileSync("./data/exported-metadata.csv").toString();
+  const content = fs.readFileSync("../data/exported-metadata.csv").toString();
   const lines = content.split("\n");
   let rocks = lines
     .filter((l) => l)
@@ -106,8 +113,42 @@ function writeMetadata(rocks) {
   }
 }
 
+const network = new StacksMainnet({ url: "http://localhost:3999" });
+
+async function getOwners(rocks) {
+  const hashToId = {};
+  for (let i = 1; i <= 50; i++) {
+    const result = await callReadOnlyFunction({
+      contractAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      contractName: "btc-rocks-mint",
+      functionName: "get-owner-boom",
+      functionArgs: [uintCV(i)],
+      senderAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+      network,
+    });
+    if (result.value.type !== ClarityType.OptionalNone) {
+      const result2 = await callReadOnlyFunction({
+        contractAddress: "SP000000000000000000002Q6VF78",
+        contractName: "bns",
+        functionName: "resolve-principal",
+        functionArgs: [result.value.value],
+        senderAddress: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+        network,
+      });
+      const name =
+        result2.type === ClarityType.ResponseErr
+          ? ""
+          : result2.value.data["name"].buffer.toString("ascii") +
+            "." +
+            result2.value.data["namespace"].buffer.toString("ascii");
+      console.log(i, cvToString(result.value.value), name);
+    }
+  }
+}
+
 readMetadata().then((rocks) => {
   console.log(rocks.length);
+  getOwners(rocks);
   //downloadImages(rocks);
-  writeMetadata(rocks);
+  //writeMetadata(rocks);
 });
