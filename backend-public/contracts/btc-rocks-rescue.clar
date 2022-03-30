@@ -4,7 +4,7 @@
 
 (define-non-fungible-token rescue uint)
 
-(define-map rescues id {sender: principal, amount: uint, when: uint})
+(define-map rescues id {sender: principal, amount: uint, when: uint, transferred: bool})
 
 (define-private (owner-of (id uint))
   (unwrap! (unwrap!
