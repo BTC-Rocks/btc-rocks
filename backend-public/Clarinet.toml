@@ -1,9 +1,6 @@
 [project]
 name = "btc-rocks"
 
-[repl]
-costs_version = 2
-
 [[project.requirements]]
 contract_id = "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts"
 
@@ -13,11 +10,9 @@ contract_id = "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait"
 [[project.requirements]]
 contract_id = "SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335.commission-trait"
 
-
 [contracts.boom-nfts]
 path = "contracts/external/boom-nfts.clar"
 depends_on = []
-
 
 [contracts.commission-nop]
 path = "contracts/external/commission-nop.clar"
@@ -30,11 +25,6 @@ depends_on = []
 [contracts.btc-rocks]
 path = "contracts/btc-rocks.clar"
 depends_on = []
-
-[contracts.btc-rocks-rescue]
-path = "contracts/btc-rocks-rescue.clar"
-depends_on = ["btc-rocks"]
-
 
 [contracts.btc-rocks-mint]
 path = "contracts/btc-rocks-mint.clar"
