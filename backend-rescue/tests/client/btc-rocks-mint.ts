@@ -7,18 +7,18 @@ import {
 
 export function toBoom(id: number, chain: Chain, user: Account) {
   return chain.callReadOnlyFn(
-    "btc-rocks-mint",
+    "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks-mint",
     "to-boom",
     [types.uint(id)],
     user.address
   );
 }
 
-export function upgrade(id: number, user: Account) {
+export function upgrade(id: number, address: string) {
   return Tx.contractCall(
-    "btc-rocks-mint",
+    "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks-mint",
     "upgrade",
     [types.uint(id)],
-    user.address
+    address
   );
 }

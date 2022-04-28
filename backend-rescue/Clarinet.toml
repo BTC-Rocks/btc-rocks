@@ -6,7 +6,16 @@ telemetry = false
 analysis = ["check_checker"]
 
 [[project.requirements]]
+contract_id = "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait"
+
+[[project.requirements]]
+contract_id = "SP497E7RX3233ATBS2AB9G4WTHB63X5PBSP5VGAQ.boom-nfts"
+
+[[project.requirements]]
 contract_id = "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks"
+
+[[project.requirements]]
+contract_id = "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks-mint"
 
 [contracts.btc-rocks-rescue]
 path = "contracts/btc-rocks-rescue.clar"
