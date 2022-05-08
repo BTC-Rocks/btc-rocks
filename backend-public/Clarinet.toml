@@ -26,6 +26,10 @@ depends_on = []
 path = "contracts/btc-rocks.clar"
 depends_on = []
 
+[contracts.btc-rocks-v2]
+path = "contracts/btc-rocks-v2.clar"
+depends_on = []
+
 [contracts.btc-rocks-mint]
 path = "contracts/btc-rocks-mint.clar"
 depends_on = ["btc-rocks"]
