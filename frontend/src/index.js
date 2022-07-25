@@ -326,7 +326,6 @@ export function App() {
                     numberOfRocks={numberOfRocks}
                   />
                   <br />
-                  <MarketActivities />
                 </>
               )}
             </section>
@@ -334,6 +333,9 @@ export function App() {
         )}
       </section>
       <section>{status}</section>
+      <section>
+        <MarketActivities />
+      </section>
       {ownedRocks && ownedRocks.length > 0 && (
         <section>
           <h5>Your upgraded BTC Rocks</h5>
