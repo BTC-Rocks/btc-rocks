@@ -54,6 +54,7 @@ export const accountsApi = new AccountsApi(
 export const getMarketActivites = async () => {
   const transactionsResult = await accountsApi.getAccountTransactions({
     principal: `${BTC_ROCKS_MARKETPLACE_CONTRACT.address}.${BTC_ROCKS_MARKETPLACE_CONTRACT.name}`,
+    unanchored: true,
   });
   console.log(transactionsResult.results);
   return transactionsResult.results;
