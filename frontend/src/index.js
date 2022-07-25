@@ -250,7 +250,7 @@ export function App() {
   };
 
   return (
-    <>
+    <div style={appStyle}>
       <section>
         <ImageGallery
           items={images}
@@ -261,11 +261,16 @@ export function App() {
             setSelectedRock(currentIndex + 1);
           }}
         />
-        <br />
-        <ProgressBar completed={completed} />
       </section>
+      {!userData && (
+        <section style={{ padding: "8px" }}>
+          <button onClick={login}>
+            Connect wallet to upgrade or transfer BTC Rocks
+          </button>
+        </section>
+      )}
       <section>
-        <h1>Upgrade process</h1>
+        <h3>Upgrade process</h3>
         Read details at{" "}
         <a
           href="https://github.com/BTC-Rocks/btc-rocks#contract-rules"
@@ -275,11 +280,6 @@ export function App() {
         </a>
       </section>
       <section style={{ padding: "8px" }}>
-        {!userData && (
-          <button onClick={login}>
-            Connect wallet to upgrade or transfer BTC Rocks
-          </button>
-        )}
         {userData && (
           <>
             <section>
@@ -299,14 +299,17 @@ export function App() {
                 } to rocks.btc`}
               </button>
               <br />
-              <section>
-                User: {userData.profile.stxAddress.mainnet}
-                <br />
-                <button onClick={logout}>logout</button>
-              </section>
+            </section>
+            <section>
+              User: {userData.profile.stxAddress.mainnet}
+              <br />
+              <button onClick={logout}>logout</button>
+            </section>
+            <section>
               {numberOfRocks && userData && (
                 <>
                   <hr />
+                  <h3>BTC Rocks Marketplace</h3>
 
                   <ListButton
                     userData={userData}
@@ -347,9 +350,12 @@ export function App() {
           })}
         </section>
       )}
-    </>
+    </div>
   );
 }
+const appStyle = {
+  backgroundColor: "#fff",
+};
 
 const root = ReactDOM.createRoot(document.getElementById("react-target"));
 root.render(<App />);
