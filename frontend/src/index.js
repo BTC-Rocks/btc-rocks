@@ -277,7 +277,7 @@ export function App() {
             </button>
           </section>
         )}
-        {selectedRock && <h1>{rocksData[selectedRock].description}</h1>}
+        {selectedRock && <h1>{rocksData[selectedRock - 1].description}</h1>}
 
         <section>
           <h3>Upgrade process</h3>
