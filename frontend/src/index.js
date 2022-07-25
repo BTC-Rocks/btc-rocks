@@ -52,6 +52,7 @@ export function App() {
   const [userData, setUserData] = useState();
   const [completed, setCompleted] = useState(0);
   const [selectedRock, setSelectedRock] = useState(initialRockId);
+  const [selectedRockOwner, setSelectedRockOwner] = useState();
   const [selectedRockLabel, setSelectedRockLabel] = useState();
   const [status, setStatus] = useState("");
   const [ownedRocks, setOwnedRocks] = useState([]);
@@ -87,23 +88,23 @@ export function App() {
       const owner = await getBtcRockOwner(rockId);
       if (owner) {
         const ownerUsername = await getUsername(owner);
-        if (owner === ownerUsername) {
-          setSelectedRockLabel(`owned by ${smartTrim(owner, 10)}.`);
-        } else {
-          setSelectedRockLabel(`owned by ${ownerUsername}.`);
-        }
+        setSelectedRockLabel(
+          `owned by ${
+            owner === ownerUsername ? smartTrim(owner, 10) : ownerUsername
+          }.`
+        );
+        setSelectedRockOwner(owner);
       } else {
         const boomOwner = await getOwner(rocksData[rockId - 1].id);
         const boomOwnerUsername = await getUsername(boomOwner);
-        if (boomOwner === boomOwnerUsername) {
-          setSelectedRockLabel(
-            `not yet upgraded and owned by ${smartTrim(boomOwner, 10)}.`
-          );
-        } else {
-          setSelectedRockLabel(
-            `not yet upgraded and owned by ${boomOwnerUsername}.`
-          );
-        }
+        setSelectedRockLabel(
+          `not yet upgraded and owned by ${
+            boomOwner === boomOwnerUsername
+              ? smartTrim(boomOwner, 10)
+              : boomOwnerUsername
+          }.`
+        );
+        setSelectedRockOwner(undefined);
       }
     }
   };
@@ -355,7 +356,7 @@ export function App() {
             </section>
 
             <section>
-              {numberOfRocks && userData && (
+              {numberOfRocks && userData && selectedRockOwner && (
                 <>
                   <hr />
                   <h3>BTC Rocks Marketplace</h3>
