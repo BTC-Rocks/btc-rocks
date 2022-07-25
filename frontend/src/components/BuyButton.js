@@ -10,8 +10,6 @@ import {
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
-import { rocksData } from "../common/rocks-data";
-import { getOwner } from "../common/boom";
 import { network } from "../common/constants";
 import {
   BTC_ROCKS_CONTRACT,

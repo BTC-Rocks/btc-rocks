@@ -165,8 +165,10 @@ export function App() {
           setStatus(`Transaction not submitted.`);
         },
       });
+    } else if (owner) {
+      setStatus(`You do not own BTC Rock #${rockId}.`);
     } else {
-      setStatus(`You do not own BTC Rock #${rockId}`);
+      setStatus(`BTC Rock #${rockId} was already upgraded.`);
     }
   };
 
@@ -176,11 +178,11 @@ export function App() {
     console.log({ stxAddress });
     const owner = await getBtcRockOwner(rockId);
     console.log({ owner, add: userData?.profile?.stxAddress?.mainnet });
-    const transferFee = numberOfRocks * BigInt(feePerRock);
+    const transferFee = BigInt(numberOfRocks * feePerRock);
     console.log({ unlockedBalance, transferFee });
     if (unlockedBalance < transferFee) {
       setStatus(
-        `You do not have enough unlocked stx, ${(
+        `You do not have enough unlocked STX, ${(
           transferFee / 1_000_000n
         ).toString(10)} STX required.`
       );
@@ -302,9 +304,10 @@ export function App() {
                 <br />
                 <button onClick={logout}>logout</button>
               </section>
-              <hr />
               {numberOfRocks && userData && (
                 <>
+                  <hr />
+
                   <ListButton
                     userData={userData}
                     rockId={selectedRock}
@@ -325,7 +328,7 @@ export function App() {
                     setStatus={setStatus}
                     numberOfRocks={numberOfRocks}
                   />
-                  <br />
+                  <hr />
                 </>
               )}
             </section>

@@ -22,7 +22,7 @@ const Tx = ({ tx }) => {
         const sender = tx.sender_address;
         label = `Rock #${rockId} was bought by ${sender}.`;
       } else {
-        label = tx.tx_id;
+        label = `${tx.contract_call.function_name}: ${tx.tx_id}`;
       }
       break;
     default:

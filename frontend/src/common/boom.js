@@ -1,4 +1,4 @@
-import { callReadOnlyFunction, cvToString, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, ClarityType, cvToString, uintCV } from "@stacks/transactions";
 import { network } from "./constants";
 import { BOOM_CONTRACT } from "./contracts";
 
@@ -11,7 +11,6 @@ export const getOwner = async (boomId) => {
     senderAddress: BOOM_CONTRACT.address,
     network,
   });
-  console.log(resultCV);
   let owner =
     resultCV.value.type === ClarityType.OptionalSome
       ? cvToString(resultCV.value.value)
