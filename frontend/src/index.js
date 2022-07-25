@@ -262,24 +262,31 @@ export function App() {
           }}
         />
       </section>
-      {!userData && (
-        <section style={{ padding: "8px" }}>
-          <button onClick={login}>
-            Connect wallet to upgrade or transfer BTC Rocks
-          </button>
+      <div style={{ padding: "8px" }}>
+        {userData ? (
+          <section>
+            User: {userData.profile.stxAddress.mainnet}
+            <button style={{ margin: "0 1em" }} onClick={logout}>
+              logout
+            </button>
+          </section>
+        ) : (
+          <section>
+            <button onClick={login}>
+              Connect wallet to upgrade or transfer BTC Rocks
+            </button>
+          </section>
+        )}
+        <section>
+          <h3>Upgrade process</h3>
+          Read details at{" "}
+          <a
+            href="https://github.com/BTC-Rocks/btc-rocks#contract-rules"
+            target="_blank"
+          >
+            https://github.com/BTC-Rocks/btc-rocks
+          </a>
         </section>
-      )}
-      <section>
-        <h3>Upgrade process</h3>
-        Read details at{" "}
-        <a
-          href="https://github.com/BTC-Rocks/btc-rocks#contract-rules"
-          target="_blank"
-        >
-          https://github.com/BTC-Rocks/btc-rocks
-        </a>
-      </section>
-      <section style={{ padding: "8px" }}>
         {userData && (
           <>
             <section>
@@ -300,11 +307,7 @@ export function App() {
               </button>
               <br />
             </section>
-            <section>
-              User: {userData.profile.stxAddress.mainnet}
-              <br />
-              <button onClick={logout}>logout</button>
-            </section>
+
             <section>
               {numberOfRocks && userData && (
                 <>
@@ -337,24 +340,27 @@ export function App() {
             </section>
           </>
         )}
-      </section>
-      <section>{status}</section>
-      <section>
-        <MarketActivities />
-      </section>
-      {ownedRocks && ownedRocks.length > 0 && (
+        {status && <section style={{ padding: "1em" }}>{status}</section>}
         <section>
-          <h5>Your upgraded BTC Rocks</h5>
-          {ownedRocks.map((e, i) => {
-            return <div key={i}>#{hexToCV(e.value.hex).value.toString()}</div>;
-          })}
+          <MarketActivities />
         </section>
-      )}
+        {ownedRocks && ownedRocks.length > 0 && (
+          <section>
+            <h5>Your upgraded BTC Rocks</h5>
+            {ownedRocks.map((e, i) => {
+              return (
+                <div key={i}>#{hexToCV(e.value.hex).value.toString()}</div>
+              );
+            })}
+          </section>
+        )}
+      </div>
     </div>
   );
 }
 const appStyle = {
   backgroundColor: "#fff",
+  fontFamily: "Open Sans, sans"
 };
 
 const root = ReactDOM.createRoot(document.getElementById("react-target"));
