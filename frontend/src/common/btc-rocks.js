@@ -4,8 +4,7 @@ import {
   cvToString,
   uintCV,
 } from "@stacks/transactions";
-import { AccountsApi, Configuration } from "@stacks/blockchain-api-client";
-import { network } from "./constants";
+import { accountsApi, network } from "./constants";
 import {
   BTC_ROCKS_CONTRACT,
   BTC_ROCKS_MARKETPLACE_CONTRACT,
@@ -43,13 +42,6 @@ export const getNumberOfRocks = async () => {
   });
   return Number(resultCV.value);
 };
-
-export const accountsApi = new AccountsApi(
-  new Configuration({
-    basePath: network.coreApiUrl,
-    fetchApi: fetch,
-  })
-);
 
 export const getMarketActivites = async () => {
   const transactionsResult = await accountsApi.getAccountTransactions({

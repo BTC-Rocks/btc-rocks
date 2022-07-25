@@ -1,14 +1,17 @@
 import {
   callReadOnlyFunction,
+  ClarityType,
   contractPrincipalCV,
   standardPrincipalCV,
 } from "@stacks/transactions";
+import { network } from "./constants";
 
-async function getUsername(address) {
+export async function getUsername(address) {
   if (
     address === "SPM6Q24H3R7FA3WE4690TQ2JQ6E125XZHP47HQYY" ||
     address === "SP8Q8QHDCZFG661H8431T2B1WX1FBD7PH76ZY1EF" ||
-    address === "SP1DKW0QTVVWQT96W159BMDAFZB68R1SG6YWFN23T"
+    address === "SP1DKW0QTVVWQT96W159BMDAFZB68R1SG6YWFN23T" ||
+    address === "SP1B6FGZWBJK2WJHJP76C2E4AW3HA4BVAR5DGK074"
   ) {
     return "bennycage.btc";
   }

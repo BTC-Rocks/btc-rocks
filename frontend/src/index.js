@@ -30,15 +30,16 @@ import { rocksData } from "./common/rocks-data.js";
 import ListButton from "./components/ListButton.js";
 import { getOwner } from "./common/boom.js";
 import {
-  accountsApi,
   feePerRock,
   getBtcRockOwner,
   getNumberOfRocks,
 } from "./common/btc-rocks.js";
-import { network } from "./common/constants.js";
+import { accountsApi, network } from "./common/constants.js";
 import UnlistButton from "./components/UnlistButton.js";
 import BuyButton from "./components/BuyButton.js";
 import MarketActivities from "./components/MarketActivities.js";
+import { smartTrim } from "./strings.js";
+import { getUsername } from "./common/bns.js";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
@@ -51,8 +52,10 @@ export function App() {
   const [userData, setUserData] = useState();
   const [completed, setCompleted] = useState(0);
   const [selectedRock, setSelectedRock] = useState(initialRockId);
+  const [selectedRockLabel, setSelectedRockLabel] = useState();
   const [status, setStatus] = useState("");
   const [ownedRocks, setOwnedRocks] = useState([]);
+  const [numberOfOwnedRocks, setNumberOfOwnedRocks] = useState(0);
   const [unlockedBalance, setUnlockedBalance] = useState();
   const [numberOfRocks, setNumberOfRocks] = useState();
 
@@ -61,6 +64,11 @@ export function App() {
       setupUser();
     }
   }, []);
+
+  useEffect(() => {
+    setSelectedRockLabel("");
+    loadOwnerOfRock(selectedRock);
+  }, [selectedRock, setSelectedRockLabel]);
 
   const setupUser = async () => {
     const user = userSession.loadUserData();
@@ -74,19 +82,49 @@ export function App() {
     });
   };
 
+  const loadOwnerOfRock = async (rockId) => {
+    if (rockId > 0) {
+      const owner = await getBtcRockOwner(rockId);
+      if (owner) {
+        const ownerUsername = await getUsername(owner);
+        if (owner === ownerUsername) {
+          setSelectedRockLabel(`owned by ${smartTrim(owner, 10)}.`);
+        } else {
+          setSelectedRockLabel(`owned by ${ownerUsername}.`);
+        }
+      } else {
+        const boomOwner = await getOwner(rocksData[rockId - 1].id);
+        const boomOwnerUsername = await getUsername(boomOwner);
+        if (boomOwner === boomOwnerUsername) {
+          setSelectedRockLabel(
+            `not yet upgraded and owned by ${smartTrim(boomOwner, 10)}.`
+          );
+        } else {
+          setSelectedRockLabel(
+            `not yet upgraded and owned by ${boomOwnerUsername}.`
+          );
+        }
+      }
+    }
+  };
+
   const loadUserRocks = async (user) => {
     console.log("addr", user?.profile?.stxAddress?.mainnet, user);
     if (user?.profile?.stxAddress?.mainnet) {
-      const nftEvents = await accountsApi.getAccountNft({
-        principal: user.profile.stxAddress.mainnet,
-      });
+      const principal = user.profile.stxAddress.mainnet;
+      const balance = await accountsApi.getAccountBalance({ principal });
+      const countOwnedRocks =
+        balance.non_fungible_tokens[
+          "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks::rock"
+        ]?.count || 0;
+      const nftEvents = await accountsApi.getAccountNft({ principal });
       const rocks = nftEvents.nft_events.filter(
         (e) =>
           e.asset_identifier ===
           "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks::rock"
       );
-      console.log(rocks);
       setOwnedRocks(rocks);
+      setNumberOfOwnedRocks(countOwnedRocks);
     }
   };
 
@@ -265,7 +303,8 @@ export function App() {
       <div style={{ padding: "8px" }}>
         {userData ? (
           <section>
-            User: {userData.profile.stxAddress.mainnet}
+            User {smartTrim(userData.profile.stxAddress.mainnet, 10)} owns{" "}
+            {numberOfOwnedRocks} rocks.
             <button style={{ margin: "0 1em" }} onClick={logout}>
               logout
             </button>
@@ -277,7 +316,12 @@ export function App() {
             </button>
           </section>
         )}
-        {selectedRock && <h1>{rocksData[selectedRock - 1].description}</h1>}
+        {selectedRock && (
+          <>
+            <h1>{rocksData[selectedRock - 1].description}</h1>
+            {selectedRockLabel && <span>{selectedRockLabel}</span>}
+          </>
+        )}
 
         <section>
           <h3>Upgrade process</h3>
