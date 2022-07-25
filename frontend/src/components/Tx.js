@@ -30,7 +30,9 @@ const Tx = ({ tx }) => {
   }
 
   return tx.is_unanchored ? (
-    <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`}>Pending:- {label}</a>
+    <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`}>
+      Pending: <span style={{ color: "#777" }}>{label}</span>
+    </a>
   ) : (
     <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`}>{label}</a>
   );
