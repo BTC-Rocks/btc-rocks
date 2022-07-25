@@ -277,6 +277,8 @@ export function App() {
             </button>
           </section>
         )}
+        {selectedRock && <h1>{rocksData[selectedRock].description}</h1>}
+
         <section>
           <h3>Upgrade process</h3>
           Read details at{" "}
@@ -360,7 +362,7 @@ export function App() {
 }
 const appStyle = {
   backgroundColor: "#fff",
-  fontFamily: "Open Sans, sans"
+  fontFamily: "Open Sans, sans",
 };
 
 const root = ReactDOM.createRoot(document.getElementById("react-target"));
