@@ -18,12 +18,17 @@ import {
 } from "../common/contracts";
 import { feePerRock } from "../common/btc-rocks";
 
-const SponsoredTransferButton = ({ rockId, userData, numberOfRocks, setStatus }) => {
+const SponsoredTransferButton = ({
+  rockId,
+  userData,
+  numberOfRocks,
+  setStatus,
+}) => {
   const transfer = async () => {
     const sponsoredFundBalance = await accountsApi.getAccountBalance({
       principal: `${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.address}.${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.name}`,
     });
-    const sponsoredFundAmount = sponsoredFundBalance.stx.balance;
+    const sponsoredFundAmount = parseInt(sponsoredFundBalance.stx.balance);
     const userAddress = userData?.profile?.stxAddress?.mainnet;
     setStatus(`Transferring... Check and confirm in your wallet`);
     await openContractCall({
@@ -46,7 +51,7 @@ const SponsoredTransferButton = ({ rockId, userData, numberOfRocks, setStatus })
         makeStandardSTXPostCondition(
           userAddress,
           FungibleConditionCode.LessEqual,
-          (feePerRock * number Of Rocks) + sponsoredFundAmount
+          feePerRock * numberOfRocks + sponsoredFundAmount
         ),
         makeStandardNonFungiblePostCondition(
           userAddress,
