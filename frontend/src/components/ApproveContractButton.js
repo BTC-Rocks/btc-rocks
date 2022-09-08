@@ -1,18 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { openContractCall } from "@stacks/connect";
 import {
-  callReadOnlyFunction,
-  ClarityType,
   contractPrincipalCV,
-  FungibleConditionCode,
-  makeStandardSTXPostCondition,
   PostConditionMode,
-  standardPrincipalCV,
   trueCV,
-  uintCV,
 } from "@stacks/transactions";
-import { network, smartContractsApi } from "../common/constants";
-import { SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT } from "../common/contracts";
+import { network } from "../common/constants";
+import {
+  BTC_ROCKS_CONTRACT,
+  SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT,
+} from "../common/contracts";
 
 const ApproveContractButton = ({ userData, setStatus }) => {
   const approve = async () => {
@@ -26,7 +23,7 @@ const ApproveContractButton = ({ userData, setStatus }) => {
           SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.address,
           SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.name
         ),
-        trueCV,
+        trueCV(),
       ],
       network,
       postConditionMode: PostConditionMode.Deny,

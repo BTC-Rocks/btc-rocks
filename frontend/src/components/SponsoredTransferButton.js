@@ -1,9 +1,12 @@
 import React from "react";
 import { openContractCall } from "@stacks/connect";
 import {
+  createAssetInfo,
   FungibleConditionCode,
   makeContractSTXPostCondition,
+  makeStandardNonFungiblePostCondition,
   makeStandardSTXPostCondition,
+  NonFungibleConditionCode,
   PostConditionMode,
   standardPrincipalCV,
   uintCV,
@@ -18,7 +21,7 @@ import { feePerRock } from "../common/btc-rocks";
 const SponsoredTransferButton = ({ rockId, userData, numberOfRocks, setStatus }) => {
   const transfer = async () => {
     const sponsoredFundBalance = await accountsApi.getAccountBalance({
-      principal: `${BTC_ROCKS_CONTRACT.address}.${BTC_ROCKS_CONTRACT.name}`,
+      principal: `${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.address}.${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.name}`,
     });
     const sponsoredFundAmount = sponsoredFundBalance.stx.balance;
     const userAddress = userData?.profile?.stxAddress?.mainnet;
