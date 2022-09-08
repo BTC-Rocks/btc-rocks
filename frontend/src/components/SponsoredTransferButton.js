@@ -25,12 +25,16 @@ const SponsoredTransferButton = ({
   setStatus,
 }) => {
   const transfer = async () => {
+    const userAddress = userData?.profile?.stxAddress?.mainnet;
+    setStatus(`Transferring... Check and confirm in your wallet`);
     const sponsoredFundBalance = await accountsApi.getAccountBalance({
       principal: `${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.address}.${SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.name}`,
     });
     const sponsoredFundAmount = parseInt(sponsoredFundBalance.stx.balance);
-    const userAddress = userData?.profile?.stxAddress?.mainnet;
-    setStatus(`Transferring... Check and confirm in your wallet`);
+    const userBalance = await accountsApi.getAccountBalance({
+      principal: userAddress,
+    });
+    const sponsoredTransferAmount = sponsoredFundAmount; // TODO reduce userBalance
     await openContractCall({
       contractAddress: SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.address,
       contractName: SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT.name,
