@@ -40,9 +40,7 @@ import BuyButton from "./components/BuyButton.js";
 import MarketActivities from "./components/MarketActivities.js";
 import { smartTrim } from "./strings.js";
 import { getUsername } from "./common/bns.js";
-import DepositButton from "./components/DepositButton.js";
-import WithdrawButton from "./components/WithdrawButton.js";
-import SponsoredTransferButton from "./components/SponsoredTransferButton.js";
+import SponsoredTransferSection from "./components/SponsoredTransferSection.js";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
@@ -393,34 +391,13 @@ export function App() {
 
             <section>
               {numberOfRocks && userData && (
-                <>
-                  <hr />
-                  <h3>BTC Rocks Transfer Sponsoring</h3>
-
-                  <DepositButton
-                    userData={userData}
-                    numberOfRocks={numberOfRocks}
-                    setStatus={setStatus}
-                  />
-                  <br />
-                  <WithdrawButton
-                    userData={userData}
-                    numberOfRocks={numberOfRocks}
-                    setStatus={setStatus}
-                  />
-                  {selectedRockOwner && (
-                    <>
-                      <br />
-                      <SponsoredTransferButton
-                        userData={userData}
-                        rockId={selectedRock}
-                        numberOfRocks={numberOfRocks}
-                        setStatus={setStatus}
-                      />
-                    </>
-                  )}
-                  <hr />
-                </>
+                <SponsoredTransferSection
+                  selectedRock={selectedRock}
+                  selectedRockOwner={selectedRockOwner}
+                  userData={userData}
+                  numberOfRocks={numberOfRocks}
+                  setStatus={setStatus}
+                />
               )}
             </section>
           </>
@@ -431,7 +408,9 @@ export function App() {
         </section>
         {ownedRocks && ownedRocks.length > 0 && (
           <section>
-            <h5>Your upgraded BTC Rocks</h5>
+            <h5>
+              Your upgraded BTC Rocks ({ownedRocks.length}/{numberOfOwnedRocks})
+            </h5>
             {ownedRocks.map((e, i) => {
               return (
                 <div key={i}>#{hexToCV(e.value.hex).value.toString()}</div>
