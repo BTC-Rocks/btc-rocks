@@ -18,6 +18,11 @@ export const BTC_ROCKS_MARKETPLACE_CONTRACT = {
   name: "btc-rocks-marketplace",
 };
 
+export const SUPPORT_BTC_ROCKS_TRANSFER_CONTRACT = {
+  address: "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9",
+  name: "support-btc-rocks-transfer-v1",
+};
+
 export const COMMISSION_CONTRACT = {
   address: "SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335",
   name: "commission-nop",

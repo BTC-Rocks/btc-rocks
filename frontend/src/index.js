@@ -40,6 +40,9 @@ import BuyButton from "./components/BuyButton.js";
 import MarketActivities from "./components/MarketActivities.js";
 import { smartTrim } from "./strings.js";
 import { getUsername } from "./common/bns.js";
+import DepositButton from "./components/DepositButton.js";
+import WithdrawButton from "./components/WithdrawButton.js";
+import SponsoredTransferButton from "./components/SponsoredTransferButton.js";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
@@ -118,12 +121,14 @@ export function App() {
         balance.non_fungible_tokens[
           "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks::rock"
         ]?.count || 0;
+
       const nftEvents = await accountsApi.getAccountNft({ principal });
       const rocks = nftEvents.nft_events.filter(
         (e) =>
           e.asset_identifier ===
           "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.btc-rocks::rock"
       );
+      // rocks that have been received recently only
       setOwnedRocks(rocks);
       setNumberOfOwnedRocks(countOwnedRocks);
     }
@@ -381,6 +386,39 @@ export function App() {
                     setStatus={setStatus}
                     numberOfRocks={numberOfRocks}
                   />
+                  <hr />
+                </>
+              )}
+            </section>
+
+            <section>
+              {numberOfRocks && userData && (
+                <>
+                  <hr />
+                  <h3>BTC Rocks Transfer Sponsoring</h3>
+
+                  <DepositButton
+                    userData={userData}
+                    numberOfRocks={numberOfRocks}
+                    setStatus={setStatus}
+                  />
+                  <br />
+                  <WithdrawButton
+                    userData={userData}
+                    numberOfRocks={numberOfRocks}
+                    setStatus={setStatus}
+                  />
+                  {selectedRockOwner && (
+                    <>
+                      <br />
+                      <SponsoredTransferButton
+                        userData={userData}
+                        rockId={selectedRock}
+                        numberOfRocks={numberOfRocks}
+                        setStatus={setStatus}
+                      />
+                    </>
+                  )}
                   <hr />
                 </>
               )}
