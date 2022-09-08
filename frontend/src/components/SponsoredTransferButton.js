@@ -46,7 +46,7 @@ const SponsoredTransferButton = ({ rockId, userData, numberOfRocks, setStatus })
         makeStandardSTXPostCondition(
           userAddress,
           FungibleConditionCode.LessEqual,
-          feePerRock * numberOfRocks
+          (feePerRock * number Of Rocks) + sponsoredFundAmount
         ),
         makeStandardNonFungiblePostCondition(
           userAddress,
@@ -57,11 +57,6 @@ const SponsoredTransferButton = ({ rockId, userData, numberOfRocks, setStatus })
             "rock"
           ),
           uintCV(rockId)
-        ),
-        makeStandardSTXPostCondition(
-          userAddress,
-          FungibleConditionCode.LessEqual,
-          sponsoredFundAmount
         ),
       ],
       onFinish: (tx) => {
